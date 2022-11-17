@@ -19,18 +19,18 @@
         public IActionResult Register(RegisterRequest request)
         {
             var authResult = _authService.Register(
-                request.username,
+                request.userName,
                 request.email,
                 request.password,
                 request.inviteCode);
 
             var response = new AuthResult(
                 authResult.id,
-                authResult.username,
+                authResult.userName,
                 authResult.email,
                 authResult.token);
 
-            return Ok(request);
+            return Ok(response);
         }
 
         [HttpPost("login")]

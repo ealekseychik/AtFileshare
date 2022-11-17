@@ -2,7 +2,7 @@
 {
     public record AuthResult(
         Guid id,
-        string username,
+        string userName,
         string email,
         string token);
 }
