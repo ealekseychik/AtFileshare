@@ -1,42 +1,41 @@
 ﻿namespace AtFileshare.API.Controllers
 {
-    using AtFileshare.Application.Services.Auth;
+    using AtFileshare.Application.Auth.Commands.Register;
+    using AtFileshare.Application.Auth.Queries.Login;
     using AtFileshare.Contracts.Auth;
+    using AutoMapper;
+    using MediatR;
     using Microsoft.AspNetCore.Mvc;
 
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService _authService;
-        
-        public AuthController(IAuthService authService)
+        private readonly ISender _sender;
+        private readonly IMapper _mapper;
+
+        public AuthController(ISender sender, IMapper mapper)
         {
-            _authService = authService;
+            _sender = sender;
+            _mapper = mapper;
         }
 
         [HttpPost("register")]
-        public IActionResult Register(RegisterRequest request)
+        public async Task<IActionResult> Register(RegisterRequest request)
         {
-            var authResult = _authService.Register(
-                request.userName,
-                request.email,
-                request.password,
-                request.inviteCode);
+            var command = _mapper.Map<RegisterCommand>(request);
+            var authResult = await _sender.Send(command);
 
-            var response = new AuthResult(
-                authResult.id,
-                authResult.userName,
-                authResult.email,
-                authResult.token);
-
-            return Ok(response);
+            return Ok(_mapper.Map<AuthResponse>(authResult));
         }
 
         [HttpPost("login")]
-        public IActionResult Login(LoginRequest request)
+        public async Task<IActionResult> Login(LoginRequest request)
         {
-            return Ok(request);
+            var query = _mapper.Map<LoginQuery>(request);
+            var authResult = await _sender.Send(query);
+
+            return Ok(_mapper.Map<AuthResponse>(authResult));
         }
     }
 }

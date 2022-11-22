@@ -1,13 +1,13 @@
 ﻿namespace AtFileshare.Application
 {
-    using AtFileshare.Application.Services.Auth;
+    using MediatR;
     using Microsoft.Extensions.DependencyInjection;
 
     public static class DependencyInjection
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddScoped<IAuthService, AuthService>();
+            services.AddMediatR(typeof(DependencyInjection).Assembly);
 
             return services;
         }

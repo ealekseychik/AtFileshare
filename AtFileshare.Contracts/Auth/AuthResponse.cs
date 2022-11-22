@@ -1,8 +1,8 @@
 ﻿namespace AtFileshare.Contracts.Auth
 {
-    public record RegisterRequest(
+    public record AuthResponse(
+        Guid Id,
         string UserName,
         string Email,
-        string Password,
-        string InviteCode);
+        string Token);
 }

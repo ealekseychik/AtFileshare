@@ -2,6 +2,7 @@
 {
     using AtFileshare.Application.Common.Interfaces.Auth;
     using AtFileshare.Application.Common.Interfaces.Services;
+    using AtFileshare.Domain.Entities;
     using Microsoft.Extensions.Options;
     using Microsoft.IdentityModel.Tokens;
     using System;
@@ -20,7 +21,7 @@
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public string GenerateToken(Guid userId, string userName)
+        public string GenerateToken(User user)
         {
             var signingCreds = new SigningCredentials(
                 new SymmetricSecurityKey(
@@ -29,8 +30,8 @@
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-                new Claim(JwtRegisteredClaimNames.UniqueName, userName),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
