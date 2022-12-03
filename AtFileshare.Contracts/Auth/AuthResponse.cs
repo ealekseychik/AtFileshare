@@ -1,8 +1,8 @@
 ﻿namespace AtFileshare.Contracts.Auth
 {
     public record AuthResponse(
-        Guid Id,
-        string UserName,
-        string Email,
-        string Token);
+        Guid Id = default!,
+        string UserName = default!,
+        string Email = default!,
+        string Token = default!);
 }

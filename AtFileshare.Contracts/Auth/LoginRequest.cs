@@ -1,6 +1,6 @@
 ﻿namespace AtFileshare.Contracts.Auth
 {
     public record LoginRequest(
-        string UserName,
+        string Email,
         string Password);
 }

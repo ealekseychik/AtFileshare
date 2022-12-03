@@ -1,6 +1,8 @@
 ﻿namespace AtFileshare.API.Middleware
 {
     using FluentValidation;
+    using Microsoft.AspNetCore.Http;
+    using System;
     using System.Net;
     using System.Text.Json;
 
@@ -28,29 +30,41 @@
 
         private static Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
-            int httpStatusCode;
-            string message;
-
-            switch (ex)
-            {
-                case var _ when ex is ValidationException:
-                    httpStatusCode = (int)HttpStatusCode.BadRequest;
-                    message = ex.Message;
-                    break;
-                default:
-                    httpStatusCode = (int)HttpStatusCode.InternalServerError;
-                    message = "An error occured while processing your request.";
-                    break;
-            }
-
-            context.Response.StatusCode = httpStatusCode;
+            context.Response.StatusCode = GetStatusCode(ex);
             context.Response.ContentType = JsonContentType;
+            var err = GetErrors(ex);
 
             return context.Response.WriteAsync(
                 JsonSerializer.Serialize(new
                 { 
-                    error = message
+                    errors = GetErrors(ex)
                 }));
+        }
+
+        private static int GetStatusCode(Exception exception) =>
+        exception switch
+        {
+            ValidationException => StatusCodes.Status400BadRequest,
+            _ => StatusCodes.Status500InternalServerError
+        };
+
+        private static IReadOnlyDictionary<string, string[]> GetErrors(Exception exception)
+        {
+            IReadOnlyDictionary<string, string[]> errors = null;
+            if (exception is ValidationException validationException)
+            {
+                errors = validationException.Errors
+                    .GroupBy(
+                        x => x.PropertyName,
+                        x => x.ErrorMessage,
+                        (propertyName, errorMessages) => new
+                        {
+                            Key = propertyName,
+                            Values = errorMessages.Distinct().ToArray()
+                        })
+                    .ToDictionary(x => x.Key, x => x.Values);
+            }
+            return errors;
         }
     }
 }

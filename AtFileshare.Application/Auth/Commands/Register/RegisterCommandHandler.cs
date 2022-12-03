@@ -19,11 +19,6 @@
 
         public async Task<AuthResult> Handle(RegisterCommand command, CancellationToken cancellationToken)
         {
-            if (_userRepository.GetUserByEmail(command.Email) is not null)
-            {
-                throw new Exception("User with this email exist!");
-            }
-
             var user = new User
             {
                 UserName = command.UserName,
