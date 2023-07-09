@@ -5,11 +5,11 @@
     using AtFileshare.Contracts.Auth;
     using AutoMapper;
     using MediatR;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    [AllowAnonymous]
+    public class AuthController : ApiController
     {
         private readonly ISender _sender;
         private readonly IMapper _mapper;

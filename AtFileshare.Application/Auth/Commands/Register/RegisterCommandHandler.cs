@@ -25,7 +25,7 @@
                 Email = command.Email,
                 Password = command.Password
             };
-            _userRepository.Add(user);
+             _userRepository.AddAsync(user);
 
             var token = _jwtTokenGenerator.GenerateToken(user);
             return new AuthResult(user, token);

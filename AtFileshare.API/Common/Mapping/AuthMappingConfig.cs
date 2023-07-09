@@ -15,6 +15,7 @@
             CreateMap<LoginRequest, LoginQuery>();
 
             CreateMap<User, AuthResponse>();
+
             // https://stackoverflow.com/a/74555743/11278567
             CreateMap<AuthResult, AuthResponse>()
                 .AfterMap((src, dest, context) => context.Mapper.Map(src.User, dest));

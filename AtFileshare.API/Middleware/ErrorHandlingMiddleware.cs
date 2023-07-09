@@ -3,7 +3,6 @@
     using FluentValidation;
     using Microsoft.AspNetCore.Http;
     using System;
-    using System.Net;
     using System.Text.Json;
 
     public class ErrorHandlingMiddleware
@@ -32,11 +31,10 @@
         {
             context.Response.StatusCode = GetStatusCode(ex);
             context.Response.ContentType = JsonContentType;
-            var err = GetErrors(ex);
 
             return context.Response.WriteAsync(
                 JsonSerializer.Serialize(new
-                { 
+                {
                     errors = GetErrors(ex)
                 }));
         }
@@ -64,6 +62,7 @@
                         })
                     .ToDictionary(x => x.Key, x => x.Values);
             }
+
             return errors;
         }
     }
